@@ -5,6 +5,7 @@
   "types": "dist/arch-clap.d.ts",
   "description": "Support for developing node.js modules with mocha/eslint/typescript",
   "scripts": {
+    "test": "clap -n xarc/test compile",
     "compile": "tsc",
     "prepublishOnly": "tsc",
     "postinstall": "node dist/install-setup.js"
@@ -81,6 +82,7 @@
     ],
     "exclude": [
       "*clap.js",
+      "*clap.ts",
       "coverage",
       "dist",
       "gulpfile.js",
