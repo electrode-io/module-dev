@@ -5,10 +5,11 @@
   "types": "dist/arch-clap.d.ts",
   "description": "Support for developing node.js modules with mocha/eslint/typescript",
   "scripts": {
-    "test": "clap -n xarc/test compile",
+    "build": "tsc",
+    "test": "clap -n xarc/test",
     "compile": "tsc",
     "prepublishOnly": "tsc",
-    "postinstall": "node dist/install-setup.js"
+    "postinstall": "node install.js"
   },
   "repository": {
     "type": "git",
@@ -17,6 +18,7 @@
   "author": "Joel Chen",
   "license": "Apache-2.0",
   "files": [
+    "install.js",
     "config",
     "dist"
   ],
