@@ -113,6 +113,10 @@ class XarcModuleDev {
   loadAppPkg() {
     this.appPkg = readAppPkgJson();
     this.existAppPkgData = JSON.stringify(this.appPkg);
+    this.updateFeatures();
+  }
+
+  updateFeatures() {
     this.hasEslint = this.appHasDevDeps(...Object.keys(eslintDevDeps));
     this.hasTypeScript = this.appHasDevDeps(...Object.keys(typeScriptDevDeps));
   }
@@ -150,10 +154,11 @@ loadTasks();
       this.addDevDepsToAppPkg(eslintTSDevDeps);
     }
 
-    console.log(`INFO: dependencies added to your package.json, please install modules again.
+    if (this.saveAppPkgJson()) {
+      const x = features.join(", ");
+      console.log(`INFO: ${x} dependencies added to your package.json, please install modules again.
   ie: run 'npm install' for npm`);
-
-    this.saveAppPkgJson();
+    }
   }
 
   rmDevDeps(...features: string[]) {
@@ -172,10 +177,11 @@ loadTasks();
       this.rmDevDepsFromAppPkg(eslintTSDevDeps);
     }
 
-    console.log(`INFO: dependencies removed from your package.json. please install modules again.
+    if (this.saveAppPkgJson()) {
+      const x = features.join(", ");
+      console.log(`INFO: ${x} dependencies removed from your package.json. please install modules again.
   ie: run 'npm install' for npm`);
-
-    this.saveAppPkgJson();
+    }
   }
 
   saveAppPkgJson(): boolean {
@@ -183,6 +189,7 @@ loadTasks();
     if (this.existAppPkgData !== newData) {
       this.existAppPkgData = newData;
       writeAppPkgJson(this.appPkg);
+      this.updateFeatures();
       return true;
     }
     return false;
@@ -388,18 +395,26 @@ function makeTasks(options: XarcModuleDevOptions): Record<string, unknown> {
     },
     init: {
       desc: `Bootstrap a project for development with @xarc/module-dev
-          Options: --typescript --eslint`,
+          Options: --no-typescript --eslint`,
       task() {
         const initTasks = [];
-        if (this.argv.includes("--typescript")) {
+        const noTs = "--no-typescript";
+        const eslint = "--eslint";
+        const xtra = _.without(this.argv, noTs, eslint, "init");
+        if (xtra.length > 0) {
+          throw new Error(`Unknown options for init task ${xtra.join(", ")}`);
+        }
+        if (!this.argv.includes(noTs)) {
           initTasks.push("typescript");
         }
-        if (this.argv.includes("--eslint")) {
+        if (this.argv.includes(eslint)) {
           initTasks.push("eslint");
         }
         initTasks.push(() => {
           xarcModuleDev.loadAppPkg();
           xarcModuleDev.setupXclapFile();
+          xarcModuleDev.setupPublishingConfig();
+          xarcModuleDev.setupMocha();
         });
         return xclap.serial(initTasks);
       }

@@ -20,23 +20,19 @@ npm init --yes
 npm install --save-dev @xarc/module-dev
 ```
 
-2. Bootstrap: Then to bootstrap your project, use one of the following commands:
+2. Bootstrap: then to bootstrap your project, use the following commands:
 
-   - No [TypeScript]: `npm run xarc-init`
-   - [TypeScript]: `npm run xarc-init-typescript`, and then run `npm install` again.
+```sh
+npx clap --require @xarc/module-dev init
+npm install
+```
+
+- `init` takes the following options. ie: `npx clap --require @xarc/module-dev init --eslint`
+
+  - `--no-typescript` - bootstrap without typescript support.
+  - `--eslint` - bootstrap with eslint support.
 
 3. Now you can run `npx clap` to see a list of build tasks available for developing your node.js module.
-
-4. [eslint]: If you want linting with [eslint] and some preset rules, then run `npx clap eslint`, and then run `npm install`.
-
-### Other Bootstrapping Options
-
-If the default npm script `xarc-init` or `xarc-init-typescript` don't fit your need, then you can invoke the `init` build task with `xclap` directly yourself.
-
-For example, to bootstrap with [TypeScript] and [eslint] together, you can run this command:
-
-- `npx clap --require @xarc/module-dev --typescript --eslint`
-- And then run `npm install` after.
 
 ### xclap-cli
 
@@ -94,19 +90,20 @@ Your [TypeScript] tests should import your TS code from `src` directly.
 
 When you are ready to publish your module to [npm], please keep the following in mind:
 
-This module automatically setup [files] in your package.json to include these files to publish:
+This module automatically setup [files] in your `package.json` to include these files to publish:
 
 - `lib` - If you have JavaScript in `lib` dir
 - `dist` - If you are writing your code in [TypeScript].
 
 For [TypeScript], your code from `src` directory is not included. If you want to include `src` dir, please add that to [files].
 
+- If you have any other files or dirs that you want to publish, then add them to the `files` list.
 - You can run `npm publish --dry-run` to see what [npm] will do without actually publishing for real.
 - When you are ready to publish for real, you can run `npm publish`.
 
 ## [TypeScript] Support
 
-While you can boostrap your project with [TypeScript] directly, but if you want to add [TypeScript] support later, you can run the `typescript` build task any time:
+If you boostraped your project without [TypeScript], but then want to add it later, you can run the `typescript` build task any time:
 
 ```sh
 npx clap typescript
@@ -118,11 +115,11 @@ And now you can start writing typescript code in `src` directory
 
 ## [eslint] Support
 
-To add [eslint] support, run `npx clap eslint`, and then run `npm install` again.
+If you didn't bootstrap your project with [eslint] support, you can always add it later by running `npx clap eslint`, and then `npm install`.
+
+You can also invoke the linting task with `npx clap lint`
 
 The build task `check` will run linting also. You can invoke it with `npx clap check`.
-
-You can also invoke just the linting task with `npx clap lint`
 
 If you need to disable certain eslint rules for a specific source file, you can add the following comment to the top of your file.
 
