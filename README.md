@@ -1,7 +1,5 @@
 # Support for developing node.js modules with mocha/eslint/typescript
 
-## Installation
-
 This module offers common config and setup for developing a node.js module.
 
 Support for standard tools include:
@@ -11,7 +9,16 @@ Support for standard tools include:
 - Code linting: [eslint]
 - Documentation: [jsdoc]
 
-To start a new module, first create the directory for it, and then follow instructions below to setup development:
+## Installation
+
+To start a new module, first create the directory for it:
+
+```sh
+mkdir my-module
+cd my-module
+```
+
+Then follow the instructions below to setup development:
 
 1. Within your new project dir, run:
 
@@ -44,7 +51,7 @@ $ npm install -g xclap-cli
 
 ## Project Structure
 
-This archetype assumes a directory structure as follows:
+This module's setup assumes your project follows a directory structure like below:
 
 ```
 .gitignore
@@ -103,7 +110,7 @@ For [TypeScript], your code from `src` directory is not included. If you want to
 
 ## [TypeScript] Support
 
-If you boostraped your project without [TypeScript], but then want to add it later, you can run the `typescript` build task any time:
+If you boostrapped your project without [TypeScript], but then want to add it later, you can run the `typescript` build task any time:
 
 ```sh
 npx clap typescript
@@ -111,7 +118,7 @@ npm install
 mkdir src
 ```
 
-And now you can start writing typescript code in `src` directory
+And now you can start writing typescript code in the `src` directory
 
 ## [eslint] Support
 
