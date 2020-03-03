@@ -120,6 +120,10 @@ mkdir src
 
 And now you can start writing typescript code in the `src` directory
 
+### tsconfig.json
+
+After this module created `tsconfig.json` for you, you can change it as you like. This moudle won't override your settings.
+
 ## [eslint] Support
 
 If you didn't bootstrap your project with [eslint] support, you can always add it later by running `npx clap eslint`, and then `npm install`.

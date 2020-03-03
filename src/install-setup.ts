@@ -10,7 +10,7 @@ import { join } from "path";
  * @param depth levels so far (to avoid infinite searching)
  * @returns dir if found
  */
-function searchAppDir(dir: string, depth: number = 0): string {
+function searchAppDir(dir: string, depth = 0): string {
   if (depth > 50) {
     return "";
   }
@@ -33,7 +33,7 @@ function searchAppDir(dir: string, depth: number = 0): string {
  */
 function installSetup(): void {
   // console.error("@xarc/module-dev post install, env INIT_CWD", process.env.INIT_CWD);
-  const appDir = searchAppDir(process.env.INIT_CWD);
+  const appDir = searchAppDir(process.env.INIT_CWD || "");
 
   if (appDir && (existsSync(join(appDir, "xclap.js")) || existsSync(join(appDir, "xclap.ts")))) {
     return;

@@ -90,24 +90,31 @@ class XarcModuleDev {
   hasEslint: boolean;
   hasTypeScript: boolean;
   existAppPkgData: string;
-  defaultTsConfig: Record<string, any>;
+  tsConfig: Record<string, any>;
 
   constructor(options: XarcModuleDevOptions) {
     this.loadAppPkg();
-    this.defaultTsConfig = options.tsConfig || {
+    const defaultTsConfig = {
       compilerOptions: {
         outDir: "dist",
         lib: ["es2018"],
-        module: "commonjs",
+        module: "CommonJS",
         esModuleInterop: false,
-        target: "es2018",
+        target: "ES2018",
         preserveConstEnums: true,
         sourceMap: true,
         declaration: true,
-        types: ["node"]
+        types: ["node"],
+        forceConsistentCasingInFileNames: true,
+        noImplicitReturns: true,
+        alwaysStrict: true,
+        // we are not ready for strict null checks
+        // strictNullChecks: true,
+        strictFunctionTypes: true
       },
       include: ["src"]
     };
+    this.tsConfig = options.tsConfig || defaultTsConfig;
   }
 
   loadAppPkg() {
@@ -252,7 +259,7 @@ node_modules
         return true;
       }
     });
-    const tasks = [];
+    const tasks: string[] = [];
     if (scanned.js) {
       tasks.push(`.lint-${dir}-js`);
     }
@@ -274,9 +281,9 @@ node_modules
       tsConfig = {};
     }
     const existData = JSON.stringify(tsConfig);
-    _.defaults(tsConfig, this.defaultTsConfig);
-    if (JSON.stringify(tsConfig) !== existData) {
-      Fs.writeFileSync(file, `${JSON.stringify(tsConfig, null, 2)}\n`);
+    const finalTsConfig = _.merge({}, this.tsConfig, tsConfig);
+    if (JSON.stringify(finalTsConfig) !== existData) {
+      Fs.writeFileSync(file, `${JSON.stringify(finalTsConfig, null, 2)}\n`);
       console.log("INFO: updated tsconfig.json for you.  Please commit it");
     }
   }
@@ -380,7 +387,7 @@ node_modules
  * @param options options
  * @returns tasks
  */
-function makeTasks(options: XarcModuleDevOptions): Record<string, unknown> {
+function makeTasks(options: XarcModuleDevOptions) {
   if (options.forceColor !== false) {
     process.env.FORCE_COLOR = "true";
   }
@@ -390,9 +397,11 @@ function makeTasks(options: XarcModuleDevOptions): Record<string, unknown> {
   const lint = options.enableLinting !== false && xarcModuleDev.hasEslint;
 
   const invokeLint = () => {
-    return lint
-      ? [].concat(...["lib", "src", "test"].map(x => xarcModuleDev.lintTask(x)).filter(x => x))
-      : [];
+    return !lint
+      ? []
+      : ([] as string[])
+          .concat(...["lib", "src", "test"].map(x => xarcModuleDev.lintTask(x)))
+          .filter(x => x);
   };
 
   const tasks = {
@@ -416,7 +425,7 @@ function makeTasks(options: XarcModuleDevOptions): Record<string, unknown> {
       desc: `Bootstrap a project for development with @xarc/module-dev
           Options: --no-typescript --eslint`,
       task() {
-        const initTasks = [];
+        const initTasks: (Function | string)[] = [];
         const noTs = "--no-typescript";
         const eslint = "--eslint";
         const xtra = _.without(this.argv, noTs, eslint, "init");
