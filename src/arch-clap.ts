@@ -138,6 +138,25 @@ loadTasks();
     }
   }
 
+  setupGitIgnore() {
+    const gi = ".gitignore";
+    if (!Fs.existsSync(Path.resolve(gi))) {
+      Fs.writeFileSync(
+        Path.resolve(gi),
+        `.nyc_output
+coverage
+dist
+node_modules
+# recommend avoid committing package-lock.* file because a module's CI
+# should use latest dep, as an app that consumes a module would have its
+# own lockfile, but remove this if you want to commit the package lock file.
+*-lock*
+`
+      );
+      console.log("INFO: created .gitignore file for you.");
+    }
+  }
+
   addDevDeps(...features: string[]) {
     const isTs = features.includes("typescript");
     const isEslint = features.includes("eslint");
@@ -415,6 +434,7 @@ function makeTasks(options: XarcModuleDevOptions): Record<string, unknown> {
           xarcModuleDev.setupXclapFile();
           xarcModuleDev.setupPublishingConfig();
           xarcModuleDev.setupMocha();
+          xarcModuleDev.setupGitIgnore();
         });
         return xclap.serial(initTasks);
       }
