@@ -176,7 +176,9 @@ node_modules
       this.addDevDepsToAppPkg(eslintDevDeps);
     }
 
-    if (isTs && isEslint) {
+    this.updateFeatures();
+
+    if (this.hasTypeScript && this.hasEslint) {
       this.addDevDepsToAppPkg(eslintTSDevDeps);
     }
 
