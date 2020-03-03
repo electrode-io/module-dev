@@ -38,11 +38,11 @@ export type XarcModuleDevOptions = {
   /** force terminal colors in output - *default* `true` */
   forceColor?: boolean;
   /** Specify a XClap instance to use - *default* `require("xclap")` */
-  xclap?: object;
+  xclap?: any; // type not available for xclap yet
   /** turn off/on linting tasks (using eslint) - *default* `true` */
   enableLinting?: boolean;
   /** Specify typescript config to override the default one */
-  tsConfig?: object;
+  tsConfig?: Record<string, any>;
 };
 
 /**
@@ -57,15 +57,13 @@ function setupPath(): void {
  * Sort property keys of an object
  *
  * @param obj object
- * @returns obj
+ * @returns obj new object with property keys sorted
  */
-function sortObjKeys(obj: any): any {
-  return Object.keys(obj)
-    .sort()
-    .reduce((newObj: any, key: string) => {
-      newObj[key] = obj[key];
-      return newObj;
-    }, {});
+function sortObjKeys<T extends {}>(obj: T): T {
+  return (Object.keys(obj) as (keyof T)[]).sort().reduce((newObj, key) => {
+    newObj[key] = obj[key];
+    return newObj;
+  }, {} as T);
 }
 
 /**
@@ -73,7 +71,7 @@ function sortObjKeys(obj: any): any {
  *
  * @returns package JSON data
  */
-function readAppPkgJson(): any {
+function readAppPkgJson(): Record<string, any> {
   return JSON.parse(Fs.readFileSync(Path.resolve("package.json")).toString());
 }
 
@@ -82,17 +80,17 @@ function readAppPkgJson(): any {
  *
  * @param pkg pkg data to write
  */
-function writeAppPkgJson(pkg: any): void {
+function writeAppPkgJson(pkg: {}): void {
   const data = JSON.stringify(pkg, null, 2);
   Fs.writeFileSync(Path.resolve("package.json"), `${data}\n`);
 }
 
 class XarcModuleDev {
-  appPkg: any;
+  appPkg: Record<string, any>;
   hasEslint: boolean;
   hasTypeScript: boolean;
   existAppPkgData: string;
-  defaultTsConfig: any;
+  defaultTsConfig: Record<string, any>;
 
   constructor(options: XarcModuleDevOptions) {
     this.loadAppPkg();
@@ -190,7 +188,7 @@ loadTasks();
     return false;
   }
 
-  addDevDepsToAppPkg(dev: any) {
+  addDevDepsToAppPkg(dev: Record<string, string>) {
     const devDep = this.appPkg.devDependencies || {};
     for (const k in dev) {
       devDep[k] = dev[k];
@@ -198,7 +196,7 @@ loadTasks();
     this.appPkg.devDependencies = sortObjKeys(devDep);
   }
 
-  rmDevDepsFromAppPkg(dev: any) {
+  rmDevDepsFromAppPkg(dev: Record<string, string>) {
     const devDep = this.appPkg.devDependencies || {};
     for (const k in dev) {
       delete devDep[k];
@@ -221,7 +219,7 @@ loadTasks();
     const scanned = filterScanDir.sync({
       dir,
       grouping: true,
-      filter(file, path, extras: any) {
+      filter(file, path, extras) {
         if ([".ts", ".tsx", ".js", ".jsx"].includes(extras.ext)) {
           return extras.ext.substr(1, 2);
         }
@@ -356,7 +354,7 @@ loadTasks();
  * @param options options
  * @returns tasks
  */
-function makeTasks(options: XarcModuleDevOptions): any {
+function makeTasks(options: XarcModuleDevOptions): Record<string, unknown> {
   if (options.forceColor !== false) {
     process.env.FORCE_COLOR = "true";
   }
@@ -499,14 +497,14 @@ function makeTasks(options: XarcModuleDevOptions): any {
  * @param xclapOrOptions options
  */
 export function loadTasks(xclapOrOptions?: object | XarcModuleDevOptions) {
-  let options = {} as XarcModuleDevOptions;
+  let options: XarcModuleDevOptions;
 
   if (xclapOrOptions) {
     const cname = xclapOrOptions.constructor.name;
     if (cname !== "XClap") {
-      options = xclapOrOptions as XarcModuleDevOptions;
+      options = xclapOrOptions;
     } else {
-      options = { xclap: xclapOrOptions } as XarcModuleDevOptions;
+      options = { xclap: xclapOrOptions };
     }
   }
 
