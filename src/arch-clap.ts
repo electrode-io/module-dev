@@ -496,16 +496,12 @@ function makeTasks(options: XarcModuleDevOptions): Record<string, unknown> {
  *
  * @param xclapOrOptions options
  */
-export function loadTasks(xclapOrOptions?: object | XarcModuleDevOptions) {
-  let options: XarcModuleDevOptions;
+export function loadTasks(xclapOrOptions: object | XarcModuleDevOptions = { xclap }) {
+  let options: XarcModuleDevOptions = xclapOrOptions;
 
-  if (xclapOrOptions) {
-    const cname = xclapOrOptions.constructor.name;
-    if (cname !== "XClap") {
-      options = xclapOrOptions;
-    } else {
-      options = { xclap: xclapOrOptions };
-    }
+  const cname = xclapOrOptions.constructor.name;
+  if (cname === "XClap") {
+    options = { xclap: xclapOrOptions };
   }
 
   setupPath();
