@@ -338,16 +338,16 @@ node_modules
     }
     const scripts = this.appPkg.scripts || {};
     this.appPkg.scripts = scripts;
-    const prepublishTasks = ["compile"];
+    const prepublishTasks = ["build"];
     if (this.hasTypedoc) {
       prepublishTasks.push("docs");
     }
     this.appPkg.scripts = _.merge({}, scripts, {
-      compile: "tsc",
+      build: "tsc",
       prepublishOnly: `clap -n ${prepublishTasks.join(" ")}`
     });
     if (this.saveAppPkgJson()) {
-      console.log(`INFO: added compile and prepublishOnly npm scripts for your typescript.`);
+      console.log(`INFO: added build and prepublishOnly npm scripts for your typescript.`);
     }
   }
 
