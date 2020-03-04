@@ -135,15 +135,21 @@ class XarcModuleDev {
   }
 
   setupXclapFile() {
+    const saveFile = (name, content) => {
+      if (!Fs.existsSync(name)) {
+        Fs.writeFileSync(name, content);
+      }
+    };
+
     if (this.hasTypeScript) {
-      Fs.writeFileSync(
+      saveFile(
         Path.resolve("xclap.ts"),
         `import { loadTasks } from "@xarc/module-dev";
 loadTasks();
 `
       );
     } else {
-      Fs.writeFileSync(
+      saveFile(
         Path.resolve("xclap.js"),
         `require("@xarc/module-dev")();
 `
