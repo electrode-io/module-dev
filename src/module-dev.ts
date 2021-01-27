@@ -421,7 +421,8 @@ node_modules
 
     this._appPkg.scripts = {
       ...this._appPkg.scripts,
-      test: "xrun xarc/test-only"
+      test: "xrun xarc/test-only",
+      coverage: "xrun xarc/test-cov"
     };
 
     tapOpts.ts ??= false;
@@ -735,7 +736,7 @@ function makeTasks(options: XarcModuleDevOptions) {
         if (xarcModuleDev.hasMocha) {
           return xsh.exec(`mocha --extension ts,js,tsx,jsx,cjs,mjs -c test/spec`);
         } else if (xarcModuleDev.hasTap) {
-          return xsh.exec(`tap`);
+          return xsh.exec(`tap --no-check-coverage`);
         } else {
           console.log("No Test Framework setup: Please add tap/mocha using npx xrun mocha|tap");
         }
