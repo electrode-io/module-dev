@@ -736,7 +736,7 @@ function makeTasks(options: XarcModuleDevOptions) {
         if (xarcModuleDev.hasMocha) {
           return xsh.exec(`mocha --extension ts,js,tsx,jsx,cjs,mjs -c test/spec`);
         } else if (xarcModuleDev.hasTap) {
-          return xsh.exec(`tap --no-check-coverage`);
+          return xsh.exec(`tap --no-coverage`);
         } else {
           console.log("No Test Framework setup: Please add tap/mocha using npx xrun mocha|tap");
         }
